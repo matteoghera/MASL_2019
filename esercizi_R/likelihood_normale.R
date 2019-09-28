@@ -17,9 +17,9 @@ log_likelihood <- function(data, sigma, mu){
 #fine dichiarazione
 ####################
 set.seed(42)
-n = 10
-mean = 3.14
-sd = 0.22
+n = 100
+mean = 38.14
+sd = 11.22
 sequence = rnorm(n = n, mean = mean, sd = sd)
 if(mean>=0){
   mu = seq(0,mean, by =0.01 )
@@ -31,25 +31,25 @@ if(mean>=0){
 
 likelihoodVal = c()
 for (i in 1:length(mu)) {
-  likelihoodVal[i] = likelihood(sequence, sigma, mu[i])
+  likelihoodVal[i] = likelihood(sequence, sd, mu[i])
 }
 
 loglikelihoodVal = c()
 for (i in 1:length(mu)) {
-  loglikelihoodVal[i] =  logLikelihood(sequence, sigma, mu[i])
+  loglikelihoodVal[i] =  log_likelihood(sequence, sd, mu[i])
 }
 
 
-qplot(x=p,
+qplot(x=mu,
       y = likelihoodVal,
       geom = "line",
       main = "Verosomiglianza",
       xlab = "mu",
       ylab = "Likelihood")
 
-par(las = 1, cex.lab = 1.2)
 
-qplot(x=p,
+
+qplot(x=mu,
       y = loglikelihoodVal,
       geom = "line",
       main = "Log-verosomiglianza",
@@ -57,5 +57,5 @@ qplot(x=p,
       ylab = "log-likelihood")
 
 imax <- which.max(loglikelihoodVal) #cerca l' indice del valore p che massimizza la log
-mu_MLE <- mu[imax] # recupera il valore di p per cui la log like è massima
+mu_MLE <- mu[imax] # recupera il valore di mu per cui la log like è massima
 mu_MLE
