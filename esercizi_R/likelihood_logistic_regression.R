@@ -1,3 +1,11 @@
+##################################
+#log likelihood di una bernulli B(p)
+##################################
+
+########################
+#dichiarazione funzioni
+########################
+
 sigmoid <- function(x){
   1/(1+exp(-x))
 }
@@ -21,6 +29,11 @@ newton <- function(X, y, beta, num_iter){
   result <- list(beta, J_hist)
   return(result)
 }
+
+####################
+#fine dichiarazione
+####################
+
 
 set.seed(11)
 x <- matrix(rnorm(400), ncol = 4)
