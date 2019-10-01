@@ -1,5 +1,5 @@
 ##################################
-#log likelihood di una bernulli B(p)
+#log likelihood per la regressione logistica  
 ##################################
 
 ########################
@@ -14,7 +14,9 @@ log_likelihood <- function(beta, X, y){
   return((-1/m)*sum(y*log(sigmoid(X%*%beta)) + (1-y)*log(1-sigmoid(X%*%beta))))
 }
 
-newton <- function(X, y, beta, num_iter){
+norm_vec <- function(x) sqrt(sum(x^2))
+
+newton <- function(X, y, beta, num_iter, eps){
   library(numDeriv)
   library(MASS)
   J_hist<-vector()
@@ -23,8 +25,12 @@ newton <- function(X, y, beta, num_iter){
     score <- (1/m)*(t(X)%*%(sigmoid(X%*%beta) - y)) # calcolo della score function
     H <- hessian(log_likelihood, beta, method = "complex", X = X, y = y)
     #H contiene le derivate seconde della log-verosimiglianza
-    beta <- beta - ginv(H)%*%score # passo iterativo del metodo di newton
-    J_hist[i] <- log_likelihood(beta, X, y)
+    beta_old = beta
+    beta <- beta_old - ginv(H)%*%score # passo iterativo del metodo di newton
+    J_hist[i] <- log_likelihood(beta, X, y) # calcola la log_likelihood sui dati con il nuovo beta
+    if(norm_vec(beta_old-beta)>eps & i<num_iter){
+      break
+    }
   }
   result <- list(beta, J_hist)
   return(result)
@@ -43,17 +49,14 @@ X<-cbind(rep(1, 100), x)
 beta<-rep(0, 5)
 
 
-num_iter = 20
-result <- newton(X, y, beta, num_iter)
+num_iter = 100
+result <- newton(X, y, beta, num_iter, 0.0004)
 beta <- result[[1]]
 print(beta)
 
-cost_hist <- result[[2]]
-plot(1:num_iter, cost_hist, type = 'l')
+cost_hist <- result[[2]] 
 
-pred <- sigmoid(X%*%beta)
-pred <- ifelse(pred > .5, 1, 0)
-accuracy <- mean(pred == y)
-print(accuracy) 
+
+
 
 
