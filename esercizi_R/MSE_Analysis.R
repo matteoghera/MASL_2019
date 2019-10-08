@@ -1,15 +1,12 @@
 #esercizio slide: Introduction to MASL
-mse <- function(myModel) 
-  return (mean(myModel$residuals^2))
-
-#impostatione dei parametri del modello e della simulazione MC
+#impostatione dei parametri del modello 
 n = 1000
-nsim = 10
+nsim = 15
 sigma = 2
 split = round(n*0.7)
 b0 = -1 # intercetta del modello
 b1 = 2 # coefficiente di reg per X1
-b2 = 1 # coefficiente di reg l'interazzione tra X1 e X2
+b2 = 1 # coefficiente di reg l'interazione tra X1 e X2
 #fine impostazione dei parametri
 
 # generazione dei dati e del modello
@@ -29,21 +26,20 @@ test = data.frame("Y"=Y[seq(from = split+1, to = length(X1))], "X1"= X1[seq(from
                   ,"X2"=X2[seq(from = split+1, to = length(X1))])
 #fine split data
 
+#stima del modello con i dati di training e calcolo del MSE
 mseTraining = c()
 mseTest = c()
 for (i in 1:nsim) {
-  #stima del modello con i dati di training
   myMod = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = training)
-  #modTest = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = test)
-  mseTraining[i] = mse(myMod)
-  mseTest[i] = mean(predict(myMod, test)^2)
+  mseTraining[i] = mean(myMod$residuals^2)
+  mseTest[i] = mean((test$Y-predict.lm(myMod, test))^2)
 }
+#fine
 
 #plotting 
-plot(1:nsim, mseTraining, type="l", pch=19, col="red", lty= 2, xlab="Complessity model", ylab="MSE")
-# Add a line
+plot(1:nsim, mseTraining, type="l", pch=19, col="red", lty= 2,
+     xlab="Complessity model", ylab="MSE")
 lines(1:nsim, mseTest, pch=19, col="blue", type="l", lty=2)
-# Add a legend
 legend("topright", legend=c("Training Set", "Test Set"),
        col=c("red", "blue"), lty=c(2,2), cex=0.8, title = "MSE")
 
