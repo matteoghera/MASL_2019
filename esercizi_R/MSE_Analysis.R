@@ -33,17 +33,17 @@ mseTraining = c()
 mseTest = c()
 for (i in 1:nsim) {
   #stima del modello con i dati di training
-  modTraing = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = training)
-  modTest = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = test)
-  mseTraining[i] = mse(modTraing)
-  mseTest[i] = mse(modTest)
+  myMod = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = training)
+  #modTest = lm(Y~poly(X1, degree = i, raw = TRUE)+X1*X2, data = test)
+  mseTraining[i] = mse(myMod)
+  mseTest[i] = mean(predict(myMod, test)^2)
 }
 
 #plotting 
 plot(1:nsim, mseTraining, type="l", pch=19, col="red", lty= 2, xlab="Complessity model", ylab="MSE")
 # Add a line
-lines(1:nsim, mseTest, pch=18, col="blue", type="l", lty=2)
+lines(1:nsim, mseTest, pch=19, col="blue", type="l", lty=2)
 # Add a legend
 legend("topright", legend=c("Training Set", "Test Set"),
-       col=c("red", "blue"), lty=1:2, cex=0.8, title = "MSE")
+       col=c("red", "blue"), lty=c(2,2), cex=0.8, title = "MSE")
 
